@@ -101,7 +101,7 @@ class DemoServer(Server):
         self.restful_template = restful_template
 
     def handle(self, req):
-        if req.path.startswith('/demo/static/'):
+        if req.path.startswith('/home/static/'):
             if '..' in req.path:
                 return Response('file not found', content_type='text/plain', status=404)
             filename = req.path.lstrip('/')
@@ -162,11 +162,11 @@ class DemoServer(Server):
             capabilities = urllib2.urlopen(internal_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'TMS', url)
-        elif req.path == '/demo/':
+        elif req.path == '/home/':
             demo = self._render_template(req, 'demo/demo.html')
         else:
             resp = Response('', status=301)
-            resp.headers['Location'] = req.script_url.rstrip('/') + '/demo/'
+            resp.headers['Location'] = req.script_url.rstrip('/') + '/home/'
             return resp
         return Response(demo, content_type='text/html')
 
