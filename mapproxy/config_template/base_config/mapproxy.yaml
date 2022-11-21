@@ -7,8 +7,8 @@
 #
 
 # Starts the following services:
-# Demo:
-#     http://localhost:8080/demo
+# Home:
+#     http://localhost:8080/home
 # WMS:
 #     capabilities: http://localhost:8080/service?REQUEST=GetCapabilities
 # WMTS:
@@ -23,7 +23,7 @@
 #     initial doc: http://localhost:8080/kml/osm/webmercator
 
 services:
-  demo:
+  home:
   tms:
     use_grid_names: true
     # origin for /tiles service
