@@ -83,7 +83,7 @@ def static_filename(name):
         return pkg_resources.resource_filename(__name__, os.path.join('templates', name))
 
 class DemoServer(Server):
-    names = ('demo',)
+    names = ('home',)
     def __init__(self, layers, md, request_parser=None, tile_layers=None,
                  srs=None, image_formats=None, services=None, restful_template=None):
         Server.__init__(self)
@@ -126,31 +126,31 @@ class DemoServer(Server):
                 return Response(demo, content_type='text/html')
 
         if 'wms_layer' in req.args:
-            demo = self._render_wms_template('demo/wms_demo.html', req)
+            demo = self._render_wms_template('home/wms_demo.html', req)
         elif 'tms_layer' in req.args:
-            demo = self._render_tms_template('demo/tms_demo.html', req)
+            demo = self._render_tms_template('home/tms_demo.html', req)
         elif 'wmts_layer' in req.args:
-            demo = self._render_wmts_template('demo/wmts_demo.html', req)
+            demo = self._render_wmts_template('home/wmts_demo.html', req)
         elif 'wms_capabilities' in req.args:
             internal_url = '%s/service?REQUEST=GetCapabilities'%(req.server_script_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             capabilities = urllib2.urlopen(internal_url)
-            demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'WMS', url)
+            demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'WMS', url)
         elif 'wmsc_capabilities' in req.args:
             internal_url = '%s/service?REQUEST=GetCapabilities&tiled=true'%(req.server_script_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             capabilities = urllib2.urlopen(internal_url)
-            demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'WMS-C', url)
+            demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'WMS-C', url)
         elif 'wmts_capabilities_kvp' in req.args:
             internal_url = '%s/service?REQUEST=GetCapabilities&SERVICE=WMTS' % (req.server_script_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             capabilities = urllib2.urlopen(internal_url)
-            demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'WMTS', url)
+            demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'WMTS', url)
         elif 'wmts_capabilities' in req.args:
             internal_url = '%s/wmts/1.0.0/WMTSCapabilities.xml' % (req.server_script_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             capabilities = urllib2.urlopen(internal_url)
-            demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'WMTS', url)
+            demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'WMTS', url)
         elif 'tms_capabilities' in req.args:
             if 'layer' in req.args and 'srs' in req.args:
                 # prevent dir traversal (seems it's not possible with urllib2, but better safe then sorry)
@@ -161,9 +161,9 @@ class DemoServer(Server):
                 internal_url = '%s/tms/1.0.0/'%(req.server_script_url)
             capabilities = urllib2.urlopen(internal_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
-            demo = self._render_capabilities_template('demo/capabilities_demo.html', capabilities, 'TMS', url)
+            demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'TMS', url)
         elif req.path == '/home/':
-            demo = self._render_template(req, 'demo/demo.html')
+            demo = self._render_template(req, 'home/demo.html')
         else:
             resp = Response('', status=301)
             resp.headers['Location'] = req.script_url.rstrip('/') + '/home/'
@@ -207,7 +207,7 @@ class DemoServer(Server):
         return sorted_cached_srs + sorted_uncached_srs
 
     def _render_template(self, req, template):
-        template = get_template(template, default_inherit="demo/static.html")
+        template = get_template(template, default_inherit="home/static.html")
         tms_tile_layers = defaultdict(list)
         for layer in self.tile_layers:
             name = self.tile_layers[layer].md.get('name')
@@ -232,7 +232,7 @@ class DemoServer(Server):
         return template.substitute(substitutions)
 
     def _render_wms_template(self, template, req):
-        template = get_template(template, default_inherit="demo/static.html")
+        template = get_template(template, default_inherit="home/static.html")
         layer = self.layers[req.args['wms_layer']]
         srs = escape(req.args['srs'])
         bbox = layer.extent.bbox_for(SRS(srs))
@@ -248,7 +248,7 @@ class DemoServer(Server):
                                    res=min_res)
 
     def _render_tms_template(self, template, req):
-        template = get_template(template, default_inherit="demo/static.html")
+        template = get_template(template, default_inherit="home/static.html")
         for layer in self.tile_layers.values():
             if (layer.name == req.args['tms_layer'] and
                     layer.grid.srs.srs_code == req.args['srs']):
@@ -278,7 +278,7 @@ class DemoServer(Server):
                                    all_tile_layers=self.tile_layers)
 
     def _render_wmts_template(self, template, req):
-        template = get_template(template, default_inherit="demo/static.html")
+        template = get_template(template, default_inherit="home/static.html")
         for layer in self.tile_layers.values():
             if (layer.name == req.args['wmts_layer'] and
                     layer.grid.srs.srs_code == req.args['srs']):
@@ -303,7 +303,7 @@ class DemoServer(Server):
                                    restful_url=restful_url)
 
     def _render_capabilities_template(self, template, xmlfile, service, url):
-        template = get_template(template, default_inherit="demo/static.html")
+        template = get_template(template, default_inherit="home/static.html")
         return template.substitute(capabilities = xmlfile,
                                    service = service,
                                    url = url)
