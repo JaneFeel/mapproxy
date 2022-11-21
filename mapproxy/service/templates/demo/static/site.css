@@ -21,6 +21,7 @@ div#header {
     padding: 0.5em 2em;
     position: relative;
     background-color: #fefefe;
+    height: 55px;
 }
 
 div#header a {
@@ -38,7 +39,6 @@ div#header h1 {
   position: absolute;
   display: inline;
   top: 5px;
-  left: 2.8em;
 }
 
 div#content {
