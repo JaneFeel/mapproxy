@@ -158,6 +158,6 @@ class MapProxyApp(object):
     def welcome_response(self, script_url):
         import mapproxy.version
         html = "<html><body><h1>Welcome to MapProxy %s</h1>" % mapproxy.version.version
-        if 'demo' in self.handlers:
+        if 'home' in self.handlers:
             html += '<p>See all configured layers and services at: <a href="%s/home/">home</a>' % (script_url, )
         return Response(html, mimetype='text/html')
