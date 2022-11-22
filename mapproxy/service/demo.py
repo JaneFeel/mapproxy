@@ -162,7 +162,7 @@ class DemoServer(Server):
             capabilities = urllib2.urlopen(internal_url)
             url = internal_url.replace(req.server_script_url, req.script_url)
             demo = self._render_capabilities_template('home/capabilities_demo.html', capabilities, 'TMS', url)
-        elif req.path == '/home/' or req.path == '/home':
+        elif req.path == '/home/':
             demo = self._render_template(req, 'home/demo.html')
         else:
             resp = Response('', status=301)
