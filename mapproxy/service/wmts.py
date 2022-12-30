@@ -270,18 +270,18 @@ class Capabilities(object):
         self.matrix_sets = matrix_sets
 
     def render(self, _map_request):
-        return self._render_template(_map_request.capabilities_template)
+        return self._render_template(_map_request.capabilities_template, _map_request.http.args)
 
-    def template_context(self):
+    def template_context(self, args):
         return dict(service=bunch(default='', **self.service),
                     restful=False,
                     layers=self.layers,
                     info_formats=self.info_formats,
                     tile_matrix_sets=self.matrix_sets)
 
-    def _render_template(self, template):
+    def _render_template(self, template, args):
         template = get_template(template)
-        doc = template.substitute(**self.template_context())
+        doc = template.substitute(**self.template_context(args))
         # strip blank lines
         doc = '\n'.join(l for l in doc.split('\n') if l.rstrip())
         return doc
@@ -292,10 +292,17 @@ class RestfulCapabilities(Capabilities):
         self.url_converter = url_converter
         self.fi_url_converter = fi_url_converter
 
-    def template_context(self):
+    def template_context(self, args):
+        layers = []
+        for layer in self.layers:
+            if 'layer' in args:
+                if layer.name == args['layer']:
+                    layers.append(layer)
+            else:
+                layers.append(layer)
         return dict(service=bunch(default='', **self.service),
                     restful=True,
-                    layers=self.layers,
+                    layers=layers,
                     info_formats=self.info_formats,
                     tile_matrix_sets=self.matrix_sets,
                     resource_template=self.url_converter.template,

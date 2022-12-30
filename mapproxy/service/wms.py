@@ -521,9 +521,9 @@ class Capabilities(object):
         return limit_llbbox(layer.extent.llbbox)
 
     def render(self, _map_request):
-        return self._render_template(_map_request.capabilities_template)
+        return self._render_template(_map_request.capabilities_template, _map_request.params)
 
-    def _render_template(self, template):
+    def _render_template(self, template, params):
         template = get_template(template)
         inspire_md = None
         if self.inspire_md:
@@ -534,8 +534,15 @@ class Capabilities(object):
             output_width = output_height = int(sqrt(self.max_output_pixels))
             max_output_size = (output_width, output_height)
 
+        key = params.get('layer')
+        child_layers = self.layers.child_layers()
+        if key in child_layers:
+            layer = child_layers[key]
+        else:
+            layer = self.layers
+        
         doc = template.substitute(service=bunch(default='', **self.service),
-                                   layers=self.layers,
+                                   layers=layer,
                                    formats=self.image_formats,
                                    info_formats=self.info_formats,
                                    srs=self.srs,
