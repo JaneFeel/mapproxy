@@ -122,18 +122,18 @@ jscript_openlayers=None
                 </tr>
             {{for wmts_layer_name, wmts_layers in wmts_layers.items()}}
             <tr><td rowspan="{{len(wmts_layers)}}">{{wmts_layer_name}}</td>
-                <td rowspan="{{len(wmts_layers)}}">
-                    <a href="../wmts/1.0.0/WMTSCapabilities.xml?layer={{layer.name}}">Document</a>
-                </td>
                 {{for loop, layer in looper(wmts_layers)}}
                     {{if not loop.first}}
                         <tr>
                     {{endif}}
                     {{if layer.grid.supports_access_with_origin('nw')}}
+                    <td rowspan="{{len(wmts_layers)}}">
+                        <a href="../wmts/1.0.0/WMTSCapabilities.xml?layer={{layer.name}}">Document</a>
+                    </td>    
                     <td class="value"><a href="../home/?wmts_layer={{layer.name}}&format={{layer.format}}&srs={{layer.grid.srs.srs_code | quote}}">{{layer.grid.srs.srs_code}}</a></td>
                     <td class="value"><a href="../home/?wmts_layer={{layer.name}}&format={{layer.format}}&srs={{layer.grid.srs.srs_code | quote}}">{{layer.format}}</a>
                     {{else}}
-                    <td class="value" colspan="2">
+                    <td class="value" colspan="3">
                         {{layer.grid.name}} not compatible with WMTS
                     </td>
                     {{endif}}
